@@ -1,19 +1,14 @@
 <?php
 
+use App\Http\Controllers\PostController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('posts');
-});
+Route::get('/', [PostController::class, 'index'])->name('home');
+Route::get('/posts', [PostController::class, 'index'])->name('posts');
+Route::get('/posts/{slug}', [PostController::class, 'show'])->name('posts.show');
 
-Route::get('/posts', function () {
-    return view('posts');
-});
-
+// Compatibility alias for /post pointing to the first or default post
 Route::get('/post', function () {
-    return view('post');
-});
-
-Route::get('/posts/{post}', function ($post) {
-    return view('post', ['post' => $post]);
+    $firstPost = \App\Models\Post::first();
+    return redirect($firstPost ? '/posts/' . $firstPost->slug : '/');
 });
